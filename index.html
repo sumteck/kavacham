@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="ml">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SLI & GIS Premium Calculator – Kerala</title>
+<!-- PWA Meta Tags -->
+<meta name="theme-color" content="#0C447C">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SLI & GIS Calc">
+
+<!-- Web App Manifest -->
+<link rel="manifest" href="./manifest.json">
+
+<!-- Apple Touch Icon -->
+<link rel="apple-touch-icon" href="./icon-192.png">
+
+<!-- Open Graph / WhatsApp Meta Tags -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="SLI & GIS Premium Calculator – Kerala">
+<meta property="og:description" content="ശമ്പള വിവരങ്ങളും സ്കെയിലും നൽകി നിങ്ങളുടെ കൃത്യമായ SLI, GIS പ്രീമിയം തുകകൾ കണ്ടെത്തൂ.">
+<meta property="og:url" content="https://kavacham.sumteck.in/">
+
+<!-- WhatsApp Logo (Absolute URL) -->
+<meta property="og:image" content="https://kavacham.sumteck.in/icon-512.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="512">
+<meta property="og:image:height" content="512">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --blue: #185FA5;
+    --blue-light: #E6F1FB;
+    --blue-mid: #B5D4F4;
+    --blue-dark: #0C447C;
+    --green: #3B6D11;
+    --green-light: #EAF3DE;
+    --amber: #BA7517;
+    --amber-light: #FAEEDA;
+    --red: #A32D2D;
+    --red-light: #FCEBEB;
+    --teal: #0F6E56;
+    --teal-light: #E1F5EE;
+    --gray-100: #F7F6F3;
+    --gray-200: #EDECEA;
+    --text: #1A1A18;
+    --text-muted: #5F5E5A;
+    --text-hint: #888780;
+    --border: rgba(0,0,0,0.12);
+    --border-mid: rgba(0,0,0,0.22);
+    --radius: 10px;
+    --radius-sm: 6px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.06);
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--gray-100);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 15px;
+    line-height: 1.6;
+    padding-bottom: 90px;
+  }
+
+  /* ── Header ── */
+  .header {
+    background: var(--blue-dark);
+    color: #fff;
+    padding: 0.75rem 1rem;
+  }
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    max-width: 520px;
+    margin: 0 auto;
+  }
+  /* Left col */
+  .header-left {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+  }
+  .header-logo {
+    width: 48px; height: 48px;
+    border-radius: 10px;
+    object-fit: contain;
+    background: rgba(255,255,255,0.12);
+    padding: 4px;
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+  /* Center col */
+  .header-center {
+    flex: 1;
+    text-align: center;
+  }
+  .header-center h1 { font-size: 15px; font-weight: 700; line-height: 1.3; }
+  .header-center p  { font-size: 10.5px; color: rgba(255,255,255,0.65); margin-top: 3px; }
+  /* Right col */
+  .header-right {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+  }
+  .visit-counter {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 10px;
+    padding: 6px 12px;
+    min-width: 64px;
+  }
+  .visit-label {
+    font-size: 9px;
+    color: rgba(255,255,255,0.7);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+  }
+  .visit-count {
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 0.02em;
+    line-height: 1;
+  }
+
+  /* ── Tab bar ── */
+  .tab-bar {
+    display: flex;
+    background: #fff;
+    border-bottom: 0.5px solid var(--border);
+    position: sticky; top: 0; z-index: 10;
+  }
+  .tab {
+    flex: 1; padding: 13px 8px;
+    font-size: 14px; font-weight: 500;
+    color: var(--text-muted);
+    background: none; border: none; cursor: pointer;
+    border-bottom: 2.5px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
+    text-align: center; font-family: inherit;
+  }
+  .tab.active { color: var(--blue); border-bottom-color: var(--blue); }
+
+  /* ── Layout ── */
+  .main { padding: 1rem; max-width: 520px; margin: 0 auto; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* ── Section label ── */
+  .sec-label {
+    font-size: 10.5px; font-weight: 700; letter-spacing: 0.07em;
+    color: var(--text-hint); text-transform: uppercase;
+    margin: 1.25rem 0 0.55rem;
+  }
+  .sec-label:first-child { margin-top: 0; }
+
+  /* ── Card ── */
+  .card {
+    background: #fff;
+    border-radius: var(--radius);
+    border: 0.5px solid var(--border);
+    padding: 1.1rem 1.1rem 0.4rem;
+    box-shadow: var(--shadow);
+    margin-bottom: 0.75rem;
+  }
+
+  /* ── Field ── */
+  .field { margin-bottom: 1rem; }
+  .field label {
+    display: block; font-size: 12.5px; font-weight: 500;
+    color: var(--text-muted); margin-bottom: 5px;
+  }
+  .field input,
+  .field select {
+    width: 100%; height: 44px;
+    border: 1px solid var(--border-mid);
+    border-radius: var(--radius-sm);
+    padding: 0 12px;
+    font-size: 15px; color: var(--text);
+    background: #fff; font-family: inherit;
+    appearance: none; -webkit-appearance: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .field input:focus,
+  .field select:focus {
+    outline: none;
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(24,95,165,0.13);
+  }
+  /* Dropdown arrow */
+  .field select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 36px;
+    /* allow text to wrap in option tags on some browsers */
+    white-space: normal;
+  }
+  .field .hint { font-size: 11px; color: var(--text-hint); margin-top: 4px; line-height: 1.5; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  /* GO note */
+  .go-note {
+    background: var(--amber-light);
+    border: 0.5px solid #e8c97a;
+    border-radius: var(--radius-sm);
+    padding: 8px 12px;
+    font-size: 11.5px; color: var(--amber);
+    margin-bottom: 1rem; line-height: 1.55;
+  }
+  .go-note strong { font-weight: 700; }
+
+  /* Existing policy section */
+  .policy-section {
+    border-top: 0.5px dashed var(--border-mid);
+    margin-top: 0.25rem; padding-top: 0.9rem;
+  }
+  .policy-label-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .policy-label-row span {
+    font-size: 12px; font-weight: 600; color: var(--teal);
+    background: var(--teal-light); padding: 2px 10px; border-radius: 20px;
+  }
+
+  /* ── Result box ── */
+  .result-box {
+    background: #fff;
+    border-radius: var(--radius);
+    border: 0.5px solid var(--border);
+    overflow: hidden; box-shadow: var(--shadow);
+    margin-bottom: 0.75rem;
+    animation: fadeIn 0.22s ease;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .result-header {
+    padding: 0.7rem 1.1rem;
+    background: var(--blue-light);
+    border-bottom: 0.5px solid var(--blue-mid);
+  }
+  .result-header span { font-size: 13px; font-weight: 700; color: var(--blue-dark); }
+
+  .result-rows { padding: 0.2rem 0; }
+  .result-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 9px 1.1rem;
+    border-bottom: 0.5px solid var(--gray-200);
+    font-size: 14px;
+  }
+  .result-row:last-child { border-bottom: none; }
+  .result-row .lbl { color: var(--text-muted); flex: 1; padding-right: 8px; }
+  .result-row .val { font-weight: 500; color: var(--text); white-space: nowrap; }
+  .result-row .val.big   { font-size: 18px; color: var(--blue); font-weight: 700; }
+  .result-row .val.grn   { color: var(--green); font-weight: 600; }
+  .result-row .val.teal  { color: var(--teal);  font-weight: 600; }
+  .result-row .val.amber { color: var(--amber); font-weight: 600; }
+
+  .result-divider { height: 0.5px; background: var(--blue-mid); margin: 2px 1.1rem; }
+
+  .result-footer {
+    padding: 0.6rem 1.1rem;
+    background: var(--gray-100);
+    font-size: 11px; color: var(--text-hint);
+    border-top: 0.5px solid var(--gray-200);
+    line-height: 1.6;
+  }
+
+  /* ── Inline selected-group info card ── */
+  .group-info-card {
+    background: var(--blue-light);
+    border: 0.5px solid var(--blue-mid);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    margin-bottom: 1rem;
+    font-size: 13px;
+    display: none;
+  }
+  .group-info-card.show { display: block; }
+  .group-info-card .gi-title {
+    font-weight: 700; color: var(--blue-dark);
+    font-size: 14px; margin-bottom: 4px;
+  }
+  .group-info-card .gi-row {
+    display: flex; justify-content: space-between;
+    color: var(--text-muted); padding: 2px 0;
+    font-size: 12.5px;
+  }
+  .group-info-card .gi-row span:last-child { font-weight: 600; color: var(--blue-dark); }
+
+  /* ── Badge ── */
+  .badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 10px; border-radius: 20px;
+    font-size: 12px; font-weight: 500;
+  }
+  .badge-ok   { background: var(--green-light); color: var(--green); }
+  .badge-fail { background: var(--red-light);   color: var(--red);   }
+
+  /* ── Empty state ── */
+  .empty {
+    text-align: center; padding: 2rem 1rem;
+    color: var(--text-hint); font-size: 13px;
+  }
+  .empty svg { margin: 0 auto 0.75rem; display: block; opacity: 0.3; }
+
+  /* ══ ACTION BAR ══ */
+  .action-bar {
+    position: fixed; bottom: 0;
+    left: 50%; transform: translateX(-50%);
+    width: 100%; max-width: 520px;
+    background: #fff;
+    border-top: 0.5px solid var(--border);
+    padding: 10px 1rem 16px;
+    display: flex; gap: 10px;
+    z-index: 50;
+    box-shadow: 0 -2px 12px rgba(0,0,0,0.07);
+  }
+  .btn {
+    flex: 1; display: flex; align-items: center; justify-content: center; gap: 7px;
+    height: 46px; border-radius: var(--radius-sm);
+    border: none; cursor: pointer;
+    font-size: 14px; font-weight: 600; font-family: inherit;
+    transition: opacity 0.15s, transform 0.1s;
+  }
+  .btn:active { transform: scale(0.96); opacity: 0.85; }
+  .btn-pdf   { background: var(--blue-dark); color: #fff; }
+  .btn-share { background: var(--teal); color: #fff; }
+
+  /* ── Toast ── */
+  .toast {
+    position: fixed; bottom: 90px; left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    background: #222; color: #fff;
+    padding: 10px 20px; border-radius: 24px;
+    font-size: 13px; opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s, transform 0.25s;
+    white-space: nowrap; z-index: 100;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  @media (max-width: 360px) { .row2 { grid-template-columns: 1fr; } }
+
+  /* ── Print ── */
+  @media print {
+    body { background: #fff; padding-bottom: 0; font-size: 13px; }
+    .tab-bar, .action-bar, .toast, .card, .sec-label,
+    .field, .policy-section, .go-note, .group-info-card { display: none !important; }
+    .panel { display: block !important; }
+    .result-box { box-shadow: none !important; border: 1px solid #ccc !important; break-inside: avoid; margin-bottom: 1rem; }
+    .print-header { display: block !important; }
+  }
+  .print-header { display: none; }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="header-inner">
+
+    <!-- Left: Logo -->
+    <div class="header-left">
+      <img src="https://kavacham.sumteck.in/logo512.png"
+           alt="Kavacham Logo"
+           class="header-logo"
+           onerror="this.style.display='none'">
+    </div>
+
+    <!-- Center: Title -->
+    <div class="header-center">
+      <h1>SLI &amp; GIS Premium Calculator</h1>
+      <p>Kerala State — GO(P)159/2021 &amp; GO(P)156/2021/Fin dt.26/11/2021</p>
+    </div>
+
+    <!-- Right: Visitor Counter -->
+    <div class="header-right">
+      <div class="visit-counter">
+        <span class="visit-label">സന്ദർശകർ</span>
+        <span class="visit-count" id="view-counter">...</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Tabs -->
+<div class="tab-bar">
+  <button class="tab active" onclick="switchTab('sli')">📋 SLI</button>
+  <button class="tab"        onclick="switchTab('gis')">🛡️ GIS</button>
+</div>
+
+<div class="main">
+
+  <!-- Print header (hidden on screen) -->
+  <div class="print-header" id="print-header">
+    <div style="font-size:20px;margin-bottom:4px">🏛️</div>
+    <div style="font-size:15px;font-weight:700;color:#0C447C">SLI &amp; GIS Premium Calculator — Kerala</div>
+    <div style="font-size:11px;color:#888;margin-top:2px">GO(P)159/2021/Fin &amp; GO(P)156/2021/Fin dt.26/11/2021</div>
+    <div style="font-size:11px;color:#888;margin-top:2px" id="print-date"></div>
+  </div>
+
+  <!-- ═══════════ SLI PANEL ═══════════ -->
+  <div class="panel active" id="panel-sli">
+    <div class="sec-label">ശമ്പള വിവരങ്ങൾ</div>
+    <div class="card">
+      <div class="go-note">
+        <strong>GO(P)159/2021/Fin</strong> — Gross × 1.5%, nearest ₹100 multiple<br>
+        Gross = Basic Pay + DA + Personal Pay
+      </div>
+      <div class="field">
+        <label>Basic Pay (₹)</label>
+        <input type="number" id="sli-basic" placeholder="ഉദാ: 42000"
+               inputmode="numeric" oninput="calcSLI()">
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label>DA (%)</label>
+          <input type="number" id="sli-da" value="35"
+                 inputmode="decimal" step="0.1" oninput="calcSLI()">
+          <div class="hint">Edit ചെയ്യാം</div>
+        </div>
+        <div class="field">
+          <label>Personal Pay (₹)</label>
+          <input type="number" id="sli-pp" placeholder="0" value="0"
+                 inputmode="numeric" oninput="calcSLI()">
+        </div>
+      </div>
+      <div class="field">
+        <label>ജനനത്തീയതി (DOB)</label>
+        <input type="date" id="sli-dob" oninput="calcSLI()">
+        <div class="hint">Nearest birthday method — 50 വയസ്സ് limit</div>
+      </div>
+      <div class="policy-section">
+        <div class="policy-label-row"><span>📁 നിലവിലുള്ള Policy</span></div>
+        <div class="field">
+          <label>ഇപ്പോൾ അടക്കുന്ന SLI Premium (₹ / month)</label>
+          <input type="number" id="sli-existing" placeholder="0 — ഇല്ലെങ്കിൽ ഒഴിഞ്ഞിടൂ"
+                 value="0" inputmode="numeric" oninput="calcSLI()">
+          <div class="hint">Minimum-മായി compare ചെയ്ത് balance കാണിക്കും</div>
+        </div>
+      </div>
+    </div>
+    <div class="sec-label">ഫലം</div>
+    <div id="sli-out"><div class="empty">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 12h6M12 9v6"/>
+      </svg>Basic Pay ടൈപ്പ് ചെയ്ത് ഫലം കാണൂ
+    </div></div>
+  </div><!-- /panel-sli -->
+
+
+  <!-- ═══════════ GIS PANEL ═══════════ -->
+  <div class="panel" id="panel-gis">
+    <div class="sec-label">ഗ്രൂപ്പ് തിരഞ്ഞെടുക്കുക</div>
+    <div class="card">
+      <div class="go-note">
+        <strong>GO(P)156/2021/Fin dt.26/11/2021</strong><br>
+        45 വയസ്സ് തികയും മുൻപ് September-ൽ upgrade option നൽകണം
+      </div>
+
+      <!-- Dropdown: S1–S27 + Master Scale, 2019 Revised Scale only -->
+      <div class="field">
+        <label>ശമ്പള സ്കെയിൽ — Scale തിരഞ്ഞെടുക്കുക (2019 Revised)</label>
+        <select id="gis-group" onchange="onGroupChange()">
+          <option value="">— Scale തിരഞ്ഞെടുക്കുക —</option>
+          <option value="S1" >S1  — 23,000 – 50,200</option>
+          <option value="S2" >S2  — 23,700 – 52,600</option>
+          <option value="S3" >S3  — 24,400 – 55,200</option>
+          <option value="S4" >S4  — 25,100 – 57,900</option>
+          <option value="S5" >S5  — 26,500 – 60,700</option>
+          <option value="S6" >S6  — 27,900 – 63,700</option>
+          <option value="S7" >S7  — 31,100 – 66,800</option>
+          <option value="S8" >S8  — 35,600 – 75,400</option>
+          <option value="S9" >S9  — 37,400 – 79,000</option>
+          <option value="S10">S10 — 39,300 – 83,000</option>
+          <option value="S11">S11 — 41,300 – 87,000</option>
+          <option value="S12">S12 — 43,400 – 91,200</option>
+          <option value="S13">S13 — 45,600 – 95,600</option>
+          <option value="S14">S14 — 50,200 – 1,05,300</option>
+          <option value="S15">S15 — 51,400 – 1,10,300</option>
+          <option value="S16">S16 — 55,200 – 1,15,300</option>
+          <option value="S17">S17 — 56,500 – 1,18,100</option>
+          <option value="S18">S18 — 59,300 – 1,20,900</option>
+          <option value="S19">S19 — 63,700 – 1,23,700</option>
+          <option value="S20">S20 — 77,200 – 1,40,500</option>
+          <option value="S21">S21 — 85,000 – 1,43,600</option>
+          <option value="S22">S22 — 95,600 – 1,53,200</option>
+          <option value="S23">S23 — 1,07,800 – 1,60,000</option>
+          <option value="S24">S24 — 1,12,800 – 1,63,400</option>
+          <option value="S25">S25 — 1,18,100 – 1,63,400</option>
+          <option value="S26">S26 — 1,23,700 – 1,66,800</option>
+          <option value="S27">S27 — 1,29,000 – 1,66,800</option>
+        </select>
+      </div>
+
+      <!-- Selected group info card -->
+      <div class="group-info-card" id="group-info-card">
+        <div class="gi-title" id="gi-title"></div>
+        <div class="gi-row"><span>കുറഞ്ഞ വരിസംഖ്യ (month)</span><span id="gi-base"></span></div>
+        <div class="gi-row"><span>പരമാവധി വരിസംഖ്യ (month)</span><span id="gi-max"></span></div>
+      </div>
+
+      <div class="field">
+        <label>ജനനത്തീയതി (DOB)</label>
+        <input type="date" id="gis-dob" oninput="calcGIS()">
+        <div class="hint">45 വയസ്സ് — upgrade option limit (nearest birthday method)</div>
+      </div>
+
+      <div class="policy-section">
+        <div class="policy-label-row"><span>📁 നിലവിലുള്ള Policy</span></div>
+        <div class="field">
+          <label>ഇപ്പോൾ അടക്കുന്ന GIS Subscription (₹ / month)</label>
+          <input type="number" id="gis-existing" placeholder="0 — ഇല്ലെങ്കിൽ ഒഴിഞ്ഞിടൂ"
+                 value="0" inputmode="numeric" oninput="calcGIS()">
+          <div class="hint">Base / Max-മായി compare ചെയ്ത് balance കാണിക്കും</div>
+        </div>
+      </div>
+    </div><!-- /card -->
+
+    <div class="sec-label">ഫലം</div>
+    <div id="gis-out"><div class="empty">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 12h6M12 9v6"/>
+      </svg>Group തിരഞ്ഞെടുത്ത് ഫലം കാണൂ
+    </div></div>
+
+  </div><!-- /panel-gis -->
+
+</div><!-- /main -->
+
+<!-- ══ Fixed Action Bar ══ -->
+<div class="action-bar">
+  <button class="btn btn-pdf" onclick="savePDF()">
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+         stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+      <polyline points="14 2 14 8 20 8"/>
+      <line x1="12" y1="18" x2="12" y2="12"/>
+      <line x1="9" y1="15" x2="15" y2="15"/>
+    </svg>
+    Save as PDF
+  </button>
+  <button class="btn btn-share" onclick="shareResult()">
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+         stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+      <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+      <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+    </svg>
+    Share
+  </button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ════════════════════════════
+   DATA — GO(P)156/2021/Fin
+   Exact Malayalam labels from GO
+════════════════════════════ */
+/* ════════════════════════════════════════
+   PAY SCALE → GIS GROUP MAPPING
+   GO(P)156/2021/Fin dt.26/11/2021
+   Boundary based on SCALE RANGE (last pay):
+     Group D : last pay < 52,600  (scale below 23700–52600) → S1 only
+     Group C : last pay ≥ 52,600, first < 50,200 → S2–S13
+     Group B : first ≥ 50,200, first < 77,200 → S14–S19
+     Group A : first ≥ 77,200 → S20–S27
+════════════════════════════════════════ */
+const SCALE_LIST = {
+  S1:  { scale2019:'23,000–50,200',   first: 23000, last: 50200  },
+  S2:  { scale2019:'23,700–52,600',   first: 23700, last: 52600  },
+  S3:  { scale2019:'24,400–55,200',   first: 24400, last: 55200  },
+  S4:  { scale2019:'25,100–57,900',   first: 25100, last: 57900  },
+  S5:  { scale2019:'26,500–60,700',   first: 26500, last: 60700  },
+  S6:  { scale2019:'27,900–63,700',   first: 27900, last: 63700  },
+  S7:  { scale2019:'31,100–66,800',   first: 31100, last: 66800  },
+  S8:  { scale2019:'35,600–75,400',   first: 35600, last: 75400  },
+  S9:  { scale2019:'37,400–79,000',   first: 37400, last: 79000  },
+  S10: { scale2019:'39,300–83,000',   first: 39300, last: 83000  },
+  S11: { scale2019:'41,300–87,000',   first: 41300, last: 87000  },
+  S12: { scale2019:'43,400–91,200',   first: 43400, last: 91200  },
+  S13: { scale2019:'45,600–95,600',   first: 45600, last: 95600  },
+  S14: { scale2019:'50,200–1,05,300', first: 50200, last: 105300 },
+  S15: { scale2019:'51,400–1,10,300', first: 51400, last: 110300 },
+  S16: { scale2019:'55,200–1,15,300', first: 55200, last: 115300 },
+  S17: { scale2019:'56,500–1,18,100', first: 56500, last: 118100 },
+  S18: { scale2019:'59,300–1,20,900', first: 59300, last: 120900 },
+  S19: { scale2019:'63,700–1,23,700', first: 63700, last: 123700 },
+  S20: { scale2019:'77,200–1,40,500', first: 77200, last: 140500 },
+  S21: { scale2019:'85,000–1,43,600', first: 85000, last: 143600 },
+  S22: { scale2019:'95,600–1,53,200', first: 95600, last: 153200 },
+  S23: { scale2019:'1,07,800–1,60,000',first:107800, last: 160000},
+  S24: { scale2019:'1,12,800–1,63,400',first:112800, last: 163400},
+  S25: { scale2019:'1,18,100–1,63,400',first:118100, last: 163400},
+  S26: { scale2019:'1,23,700–1,66,800',first:123700, last: 166800},
+  S27: { scale2019:'1,29,000–1,66,800',first:129000, last: 166800},
+  MS:  { scale2019:'23,700–1,66,800',  first: 23700, last: 166800},
+};
+
+/* Determine GIS group — GO(P)156/2021 boundary */
+function getGISGroup(scaleKey) {
+  if (!scaleKey) return null;
+  const { first, last } = SCALE_LIST[scaleKey];
+  if (first >= 77200) return 'A';          // Group A: scale starts ₹77,200+
+  if (first >= 50200) return 'B';          // Group B: scale starts ₹50,200–₹77,199
+  if (last  >= 52600) return 'C';          // Group C: last pay ≥ ₹52,600
+  return 'D';                               // Group D: scale below ₹23,700–52,600 (S1)
+}
+
+const GIS_GROUPS = {
+  A: { base: 1500, max: 2000, label: '₹77,200–1,40,500 മുതൽ മേലോട്ട്' },
+  B: { base: 1000, max: 2000, label: '₹50,200–1,05,300 to ₹77,200–1,40,500' },
+  C: { base:  800, max: 1600, label: '₹23,700–52,600 to ₹50,200–1,05,300' },
+  D: { base:  400, max:  800, label: '₹23,700–52,600 ന് താഴെ' }
+};
+
+/* ════ HELPERS ════ */
+function fmt(n) {
+  return '₹' + Math.round(n).toLocaleString('en-IN');
+}
+
+function getAge(dob) {
+  if (!dob) return null;
+  const d = new Date(dob), today = new Date();
+  const hasPassed = today >= new Date(today.getFullYear(), d.getMonth(), d.getDate());
+  let age = today.getFullYear() - d.getFullYear();
+  if (!hasPassed) age--;
+  const lastBday = new Date(today.getFullYear() - (hasPassed ? 0 : 1), d.getMonth(), d.getDate());
+  const nextBday = new Date(lastBday.getFullYear() + 1, d.getMonth(), d.getDate());
+  return (today - lastBday) <= (nextBday - today) ? age : age + 1;
+}
+
+function ageBadge(age, limit) {
+  if (age === null) return '';
+  return age < limit
+    ? `<span class="badge badge-ok">✓ ${age} വയസ്സ് — Eligible</span>`
+    : `<span class="badge badge-fail">✕ ${age} വയസ്സ് — Not eligible (${limit} limit)</span>`;
+}
+
+/* SLI: Gross × 1.5%, nearest ₹100 */
+function sliMinPremium(basic, da, pp) {
+  const gross = basic + (basic * da / 100) + pp;
+  return Math.ceil(gross * 0.015 / 100) * 100;
+}
+
+/* GIS: 1.5% of (Basic+DA+PP+SP), nearest ₹10, capped at ₹2000 */
+function gisMinPremium(basic, da, pp, sp) {
+  const gross = basic + (basic * da / 100) + pp + sp;
+  return Math.min(Math.ceil(gross * 0.015 / 10) * 10, 2000);
+}
+
+function diffRow(existing, required, label) {
+  if (existing <= 0) return '';
+  const diff = required - existing;
+  if (diff === 0)
+    return `<div class="result-row"><span class="lbl">${label}</span><span class="val grn">✓ കൃത്യം</span></div>`;
+  if (diff > 0)
+    return `<div class="result-row"><span class="lbl">${label} — അധികം വേണ്ടത്</span><span class="val" style="color:var(--red)">+${fmt(diff)}</span></div>`;
+  return `<div class="result-row"><span class="lbl">${label} — നിലവിൽ അധികം</span><span class="val teal">${fmt(Math.abs(diff))} extra</span></div>`;
+}
+
+function showToast(msg, dur = 2500) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), dur);
+}
+
+function emptyState(msg) {
+  return `<div class="empty">
+    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 12h6M12 9v6"/>
+    </svg>${msg}</div>`;
+}
+
+/* ════ TAB SWITCH ════ */
+function switchTab(t) {
+  document.querySelectorAll('.tab').forEach((el, i) =>
+    el.classList.toggle('active', ['sli','gis'][i] === t));
+  document.querySelectorAll('.panel').forEach(el => el.classList.remove('active'));
+  document.getElementById('panel-' + t).classList.add('active');
+}
+
+/* ════ GROUP CHANGE — show info card + calc ════ */
+function onGroupChange() {
+  const scaleKey = document.getElementById('gis-group').value;
+  const card     = document.getElementById('group-info-card');
+
+  if (!scaleKey) {
+    card.classList.remove('show');
+    document.getElementById('gis-out').innerHTML = emptyState('Scale തിരഞ്ഞെടുത്ത് ഫലം കാണൂ');
+    return;
+  }
+
+  const sc   = SCALE_LIST[scaleKey];
+  const grp  = getGISGroup(scaleKey);
+  const g    = GIS_GROUPS[grp];
+
+  document.getElementById('gi-title').textContent   = scaleKey + ' — GIS Group ' + grp;
+  document.getElementById('gi-base').textContent    = fmt(g.base) + ' / month';
+  document.getElementById('gi-max').textContent     = fmt(g.max)  + ' / month';
+  card.classList.add('show');
+
+  calcGIS();
+}
+
+/* ════ SLI CALC ════ */
+function calcSLI() {
+  const basic    = parseFloat(document.getElementById('sli-basic').value)    || 0;
+  const da       = parseFloat(document.getElementById('sli-da').value)       || 0;
+  const pp       = parseFloat(document.getElementById('sli-pp').value)       || 0;
+  const existing = parseFloat(document.getElementById('sli-existing').value) || 0;
+  const dob      = document.getElementById('sli-dob').value;
+  const el       = document.getElementById('sli-out');
+
+  if (!basic) { el.innerHTML = emptyState('Basic Pay ടൈപ്പ് ചെയ്ത് ഫലം കാണൂ'); return; }
+
+  const gross   = basic + (basic * da / 100) + pp;
+  const minPrem = sliMinPremium(basic, da, pp);
+  const annual  = minPrem * 12;
+  const age     = getAge(dob);
+
+  el.innerHTML = `
+  <div class="result-box" id="sli-result-box">
+    <div class="result-header"><span>📋 SLI — കണക്കിന്റെ ഫലം</span></div>
+    <div class="result-rows">
+      <div class="result-row"><span class="lbl">Basic Pay</span><span class="val">${fmt(basic)}</span></div>
+      <div class="result-row"><span class="lbl">DA (${da}%)</span><span class="val">${fmt(basic * da / 100)}</span></div>
+      <div class="result-row"><span class="lbl">Personal Pay</span><span class="val">${fmt(pp)}</span></div>
+      <div class="result-divider"></div>
+      <div class="result-row"><span class="lbl">ആകെ ശമ്പളം (Gross)</span><span class="val">${fmt(gross)}</span></div>
+      <div class="result-row"><span class="lbl">Gross × 1.5% (raw)</span><span class="val">${fmt(gross * 0.015)}</span></div>
+      <div class="result-divider"></div>
+      <div class="result-row"><span class="lbl">കുറഞ്ഞ SLI premium (month)</span><span class="val big">${fmt(minPrem)}</span></div>
+      ${existing > 0 ? `
+      <div class="result-divider"></div>
+      <div class="result-row"><span class="lbl">ഇപ്പോൾ അടക്കുന്ന policy</span><span class="val teal">${fmt(existing)}</span></div>
+      ${diffRow(existing, minPrem, 'Minimum-മായി')}
+      ` : ''}
+      ${age !== null ? `
+      <div class="result-divider"></div>
+      <div class="result-row"><span class="lbl">പ്രായം (nearest birthday)</span><span class="val">${ageBadge(age, 50)}</span></div>
+      ` : ''}
+    </div>
+    <div class="result-footer">
+      GO(P) No.159/2021/Fin — Gross × 1.5%, nearest ₹100 multiple<br>
+      50 വയസ്സ് കഴിഞ്ഞവർക്ക് പുതിയ / Additional policy എടുക്കാൻ കഴിയില്ല
+    </div>
+  </div>`;
+}
+
+/* ════ GIS CALC ════ */
+function calcGIS() {
+  const scaleKey = document.getElementById('gis-group').value;
+  const existing = parseFloat(document.getElementById('gis-existing').value) || 0;
+  const dob      = document.getElementById('gis-dob').value;
+  const el       = document.getElementById('gis-out');
+
+  if (!scaleKey) { el.innerHTML = emptyState('Scale തിരഞ്ഞെടുത്ത് ഫലം കാണൂ'); return; }
+
+  const sc  = SCALE_LIST[scaleKey];
+  const grp = getGISGroup(scaleKey);
+  const g   = GIS_GROUPS[grp];
+  const age = getAge(dob);
+
+  el.innerHTML = `
+  <div class="result-box" id="gis-result-box">
+    <div class="result-header"><span>🛡️ GIS — ${scaleKey} (Group ${grp}) ഫലം</span></div>
+    <div class="result-rows">
+      <div class="result-row"><span class="lbl">Scale No.</span><span class="val">${scaleKey}</span></div>
+      <div class="result-row"><span class="lbl">2019 Revised Scale</span><span class="val" style="font-size:13px">₹${sc.scale2019}</span></div>
+      <div class="result-row"><span class="lbl">GIS Group</span><span class="val">Group ${grp} — ${g.label}</span></div>
+      <div class="result-divider"></div>
+      <div class="result-row"><span class="lbl">കുറഞ്ഞ subscription (month)</span><span class="val big">${fmt(g.base)}</span></div>
+      <div class="result-row"><span class="lbl">പരമാവധി subscription (month)</span><span class="val grn">${fmt(g.max)}</span></div>
+
+      ${existing > 0 ? `
+      <div class="result-divider"></div>
+      <div class="result-row"><span class="lbl">ഇപ്പോൾ അടക്കുന്ന subscription</span><span class="val teal">${fmt(existing)}</span></div>
+      ${diffRow(existing, g.base, 'കുറഞ്ഞ തുക-മായി')}
+      ${diffRow(existing, g.max,  'Maximum-മായി')}
+      <div class="result-row">
+        <span class="lbl">Max-ലേക്ക് upgrade ചെയ്യാൻ</span>
+        <span class="val amber">${existing >= g.max ? '✓ ഇതിനകം max-ൽ' : fmt(g.max - existing) + ' / month കൂടി'}</span>
+      </div>
+      ` : ''}
+
+      ${age !== null ? `
+      <div class="result-divider"></div>
+      <div class="result-row"><span class="lbl">പ്രായം (GIS upgrade — 45 limit)</span><span class="val">${ageBadge(age, 45)}</span></div>
+      ` : ''}
+    </div>
+    <div class="result-footer">
+      GO(P)No.156/2021/Fin dt.26/11/2021 | GIS Rules 2010 — Rule 5.1(a)<br>
+      45 വയസ്സ് തികയും മുൻപ് September-ൽ option നൽകണം | Max ₹2,000/month
+    </div>
+  </div>`;
+}
+
+/* ════ SAVE AS PDF ════ */
+function savePDF() {
+  const hasSLI = !!document.getElementById('sli-result-box');
+  const hasGIS = !!document.getElementById('gis-result-box');
+  if (!hasSLI && !hasGIS) { showToast('⚠️ ആദ്യം ഒരു result കണക്കാക്കൂ'); return; }
+  const activeTab = document.querySelector('.tab.active').textContent.includes('SLI') ? 'sli' : 'gis';
+  const d = new Date();
+  document.getElementById('print-date').textContent =
+    'Generated: ' + d.toLocaleDateString('en-IN',
+      { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+  document.querySelectorAll('.panel').forEach(p => p.style.display = 'block');
+  window.print();
+  setTimeout(() => {
+    document.querySelectorAll('.panel').forEach(p => p.style.display = '');
+    document.getElementById('panel-' + activeTab).classList.add('active');
+  }, 600);
+}
+
+/* ════ SHARE ════ */
+function buildShareText() {
+  const lines = ['🏛️ SLI & GIS Premium Calculator — Kerala','──────────────────────────────'];
+  const sliBasic = document.getElementById('sli-basic').value;
+  if (sliBasic) {
+    const basic=parseFloat(sliBasic)||0, da=parseFloat(document.getElementById('sli-da').value)||0;
+    const pp=parseFloat(document.getElementById('sli-pp').value)||0;
+    const ex=parseFloat(document.getElementById('sli-existing').value)||0;
+    const gross=basic+(basic*da/100)+pp, min=sliMinPremium(basic,da,pp);
+    lines.push('📋 SLI');
+    lines.push(`Basic Pay      : ${fmt(basic)}`);
+    lines.push(`DA (${da}%)       : ${fmt(basic*da/100)}`);
+    lines.push(`Gross Salary   : ${fmt(gross)}`);
+    lines.push(`Min Premium/mo : ${fmt(min)}`);
+    lines.push(`Min Premium/yr : ${fmt(min*12)}`);
+    if(ex>0){lines.push(`Existing Policy: ${fmt(ex)}`);lines.push(`Total Deduction: ${fmt(ex+min)}`);}
+    const age=getAge(document.getElementById('sli-dob').value);
+    if(age!==null) lines.push(`Age            : ${age} yrs — ${age<50?'Eligible':'Not eligible'} (SLI 50 limit)`);
+    lines.push('');
+  }
+  const grp=document.getElementById('gis-group').value;
+  if(grp){
+    const g=GIS_DATA[grp];
+    const ex=parseFloat(document.getElementById('gis-existing').value)||0;
+    lines.push('🛡️ GIS');
+    lines.push(`Group          : ${g.mlLabel}`);
+    lines.push(`Base Sub/mo    : ${fmt(g.base)}`);
+    lines.push(`Max Sub/mo     : ${fmt(g.max)}`);
+    lines.push(`Base Sub/yr    : ${fmt(g.base*12)}`);
+    lines.push(`Max Sub/yr     : ${fmt(g.max*12)}`);
+    if(ex>0){
+      lines.push(`Current Sub    : ${fmt(ex)}`);
+      lines.push(`To reach max   : ${ex>=g.max?'Already at max':fmt(g.max-ex)+' more/month'}`);
+    }
+    const age=getAge(document.getElementById('gis-dob').value);
+    if(age!==null) lines.push(`Age            : ${age} yrs — ${age<45?'Eligible for upgrade':'Not eligible'} (GIS 45 limit)`);
+    lines.push('');
+  }
+  if(lines.length<=2) return null;
+  lines.push('──────────────────────────────');
+  lines.push('GO(P)159/2021/Fin & GO(P)156/2021/Fin dt.26/11/2021');
+  return lines.join('\n');
+}
+
+async function shareResult() {
+  const text = buildShareText();
+  if (!text) { showToast('⚠️ ആദ്യം ഒരു result കണക്കാക്കൂ'); return; }
+  if (navigator.share) {
+    try { await navigator.share({ title: 'SLI & GIS Calculator', text }); return; }
+    catch(e) { if(e.name==='AbortError') return; }
+  }
+  try {
+    await navigator.clipboard.writeText(text);
+    showToast('✓ Clipboard-ൽ copy ആയി — Paste ചെയ്ത് share ചെയ്യൂ');
+  } catch {
+    showToast('ℹ️ Result text select ചെയ്ത് copy ചെയ്യൂ');
+  }
+}
+</script>
+<!-- Visitor Counter -->
+<script>
+  fetch("https://sumteck.tksumesh85.workers.dev/?site=sli_gis_calculator")
+    .then(r => r.json())
+    .then(data => {
+      document.getElementById("view-counter").innerText =
+        Number(data.views).toLocaleString('en-IN');
+    })
+    .catch(() => {
+      document.getElementById("view-counter").innerText = "—";
+    });
+</script>
+
+</body>
+</html>
