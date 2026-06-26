@@ -1,0 +1,24 @@
+{
+  "name": "SLI & GIS Premium Calculator - Kerala",
+  "short_name": "SLI & GIS Calc",
+  "description": "Kerala State SLI & GIS Premium Calculator based on GO(P)159/2021 & GO(P)156/2021/Fin.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F7F6F3",
+  "theme_color": "#0C447C",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
